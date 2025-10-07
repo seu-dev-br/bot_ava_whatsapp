@@ -303,6 +303,12 @@ app.delete('/subject/:code', (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🌐 Frontend rodando em http://localhost:${PORT}`);
-});
+// Para desenvolvimento local
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🌐 Frontend rodando em http://localhost:${PORT}`);
+  });
+}
+
+// Exportar para Vercel
+module.exports = app;
