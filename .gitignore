@@ -6,11 +6,11 @@ node_modules/
 .DS_Store
 npm-debug.log
 *.log
-calendario.ics.backupules/
+calendario.ics.backup
 .wwebjs_auth/
 .wwebjs_chrome/
 .env
 .DS_Store
 npm-debug.log
 *.log
-lendario.icsca.backup
+calendario.ics.backup

@@ -25,9 +25,14 @@ npm start
 
 ## 🌐 Frontend Web
 
+### Opções de uso:
+- **Local**: `npm run web` → http://localhost:3000
+- **Vercel**: Deploy na nuvem (veja seção abaixo) → acesse de qualquer lugar
+
 ### Funcionalidades:
 - 📤 **Upload de calendário .ics** — substitui o arquivo atual
 - ➕ **Criar lembretes manuais** — adiciona eventos personalizados
+- 📚 **Gerenciar disciplinas** — adicionar/editar/remover matérias
 - 📋 **Visualizar todos os eventos** — lista ordenada por data
 - 🗑️ **Deletar eventos** — remover eventos específicos
 - 📊 **Estatísticas** — total de eventos e próximos 7 dias
@@ -54,42 +59,22 @@ npm start
 Configuração rápida
 - Edite `whatsapp-web.js` e ajuste `CONFIG` (nome do grupo, caminho do .ics e `anticipationHours`).
 
-## 🚂 Deploy no Railway
+## � Deploy no Vercel (Recomendado)
 
-### Passo a passo:
+### Guia rápido:
 
-1. **Crie uma conta no Railway**: https://railway.app/
+1. **Acesse**: https://vercel.com/ e faça login com GitHub
+2. **Clique em "Add New..."** → "Project"
+3. **Importe**: `seu-dev-br/bot_ava_whatsapp`
+4. **Deploy** - Vercel detecta configurações automaticamente
+5. **Acesse**: `https://bot-ava-whatsapp.vercel.app`
 
-2. **Instale o Railway CLI** (opcional):
-```powershell
-npm install -g @railway/cli
-railway login
-```
+📖 **Guia completo**: Veja [DEPLOY_VERCEL.md](./DEPLOY_VERCEL.md)
 
-3. **Deploy via GitHub** (Recomendado):
-   - Acesse https://railway.app/
-   - Clique em "New Project"
-   - Selecione "Deploy from GitHub repo"
-   - Escolha o repositório `seu-dev-br/bot_ava_whatsapp`
-   - Railway detectará automaticamente as configurações
-
-4. **Deploy via CLI** (alternativa):
-```powershell
-railway init
-railway up
-```
-
-5. **Configurar variáveis de ambiente** (se necessário):
-   - No painel do Railway, vá em "Variables"
-   - Adicione: `PORT` (Railway define automaticamente)
-
-6. **Acesse seu frontend**:
-   - Railway fornecerá uma URL pública (ex: `https://seu-projeto.up.railway.app`)
-
-### ⚠️ Notas importantes:
-- O bot WhatsApp (`whatsapp-web.js`) **NÃO pode rodar no Railway** pois precisa de interface gráfica para escanear QR
-- Apenas o **frontend web** (`server.js`) será hospedado no Railway
-- O bot deve continuar rodando localmente com `npm start`
+### ⚠️ Importante:
+- ✅ **Frontend hospedado** no Vercel (visualização, interface)
+- ❌ **Bot roda localmente** (precisa escanear QR Code)
+- 💾 **Arquivo .ics** gerenciado localmente pelo bot
 
 ## Commit & push
 

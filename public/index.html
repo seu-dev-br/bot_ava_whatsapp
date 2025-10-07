@@ -237,7 +237,10 @@
   </div>
 
   <script>
-    const API_URL = 'http://localhost:3000';
+    // Detecta automaticamente se está rodando localmente ou no Railway
+    const API_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3000' 
+      : window.location.origin;
 
     function showAlert(message, type = 'success') {
       const alertDiv = document.createElement('div');

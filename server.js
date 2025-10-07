@@ -13,6 +13,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Rota de health check
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    calendarExists: fs.existsSync('./calendario.ics'),
+    botWebhook: process.env.BOT_WEBHOOK_URL || 'not configured'
+  });
+});
+
 // Storage para upload de arquivos
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, './'),
@@ -99,7 +109,12 @@ app.post('/reminder', (req, res) => {
     
     // Notificar o bot para enviar mensagem imediatamente
     try {
+      // URL do webhook do bot (configurável via variável de ambiente)
+      const botWebhookUrl = process.env.BOT_WEBHOOK_URL || 'http://localhost:3001';
+      const https = require('https');
       const http = require('http');
+      const url = require('url');
+      
       const postData = JSON.stringify({
         summary,
         description: description || '',
@@ -107,10 +122,13 @@ app.post('/reminder', (req, res) => {
         category: category || ''
       });
 
+      const parsedUrl = url.parse(botWebhookUrl + '/notify');
+      const isHttps = parsedUrl.protocol === 'https:';
+      
       const options = {
-        hostname: 'localhost',
-        port: 3001,
-        path: '/notify',
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || (isHttps ? 443 : 3001),
+        path: parsedUrl.path,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,16 +136,18 @@ app.post('/reminder', (req, res) => {
         }
       };
 
-      const req = http.request(options, (response) => {
+      const client = isHttps ? https : http;
+      const req = client.request(options, (response) => {
         let data = '';
         response.on('data', chunk => data += chunk);
         response.on('end', () => {
-          console.log('Bot notificado:', data);
+          console.log('Bot notificado via', botWebhookUrl, ':', data);
         });
       });
 
       req.on('error', (error) => {
         console.error('Erro ao notificar bot:', error.message);
+        console.log('💡 Configure BOT_WEBHOOK_URL para receber notificações instantâneas');
       });
 
       req.write(postData);

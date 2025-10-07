@@ -1,7 +1,7 @@
 .wwebjs_auth/
 .wwebjs_chrome/
+.wwebjs_cache/
 node_modules/
 *.log
 .env
-.git/
 whatsapp-web.js
