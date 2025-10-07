@@ -16,9 +16,24 @@ npm install
 npm start
 ```
 
-Comandos no WhatsApp (a partir do número que iniciou a sessão):
+## Comandos disponíveis
+
+### Comandos públicos (qualquer pessoa pode usar):
+- `!ajuda` ou `!help` — mostra todos os comandos
+- `!atividades_proximas` — lista atividades dos próximos 7 dias
+- `!materias` — lista todas as disciplinas disponíveis
+- `!<materia>` — atividades futuras de uma disciplina (ex: `!bdi`, `!banco_dados`)
+
+### Comandos administrativos (apenas quem iniciou a sessão):
 - `!status` — mostra total de eventos e quantos foram notificados
 - `!recarregar` — recarrega o `.ics` e força checagem
+
+### Exemplo de uso:
+```
+!materias
+!bdi
+!atividades_proximas
+```
 
 Configuração rápida
 - Edite `whatsapp-web.js` e ajuste `CONFIG` (nome do grupo, caminho do .ics e `anticipationHours`).

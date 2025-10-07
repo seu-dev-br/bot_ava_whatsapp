@@ -8,13 +8,25 @@ const CONFIG = {
   groupName: 'Teste_Grupo',
   icsFilePath: './calendario.ics',
   checkInterval: 60 * 60 * 1000, // 1 hora
-  anticipationHours: 24
+  anticipationHours: 720
 };
+
+// Detectar Chromium do puppeteer
+let execPath;
+try {
+  execPath = require('puppeteer').executablePath();
+} catch (e) {
+  execPath = undefined;
+}
 
 // Inicializar cliente com autenticação local
 const client = new Client({
   authStrategy: new LocalAuth(),
-  puppeteer: { headless: false }
+  puppeteer: { 
+    headless: true,
+    executablePath: execPath,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+  }
 });
 
 let notifiedEvents = new Set();
@@ -88,6 +100,12 @@ async function sendReminderToGroup(event, timeUntil) {
   }
 }
 
+function extractSubjectCode(categories) {
+  if (!categories) return null;
+  const match = categories.match(/^([^-]+)/);
+  return match ? match[1].trim() : categories.trim();
+}
+
 function getActivityType(summary) {
   const s = (summary || '').toLowerCase();
   if (s.includes('avalia')) return '📝 Prova/Avaliação';
@@ -113,14 +131,99 @@ function formatReminderMessage(event, timeUntil) {
 }
 
 client.on('message', async msg => {
-  if (msg.body === '!recarregar' && msg.fromMe) {
+  const body = (msg.body || '').trim();
+  
+  // Comandos administrativos (apenas você)
+  if (body === '!recarregar' && msg.fromMe) {
     notifiedEvents.clear();
     await checkUpcomingEvents();
     msg.reply('Arquivo .ics recarregado.');
+    return;
   }
-  if (msg.body === '!status' && msg.fromMe) {
+  if (body === '!status' && msg.fromMe) {
     const events = readICSFile();
     msg.reply(`Total eventos: ${events.length}\nNotificados: ${notifiedEvents.size}`);
+    return;
+  }
+
+  // Comandos públicos (qualquer pessoa)
+  if (body === '!ajuda' || body === '!help') {
+    const help = `🤖 *Comandos disponíveis:*\n\n` +
+      `!atividades_proximas - Mostra atividades dos próximos 7 dias\n` +
+      `!materias - Lista todas as disciplinas\n` +
+      `!<materia> - Atividades de uma disciplina (ex: !banco_dados)\n` +
+      `!ajuda - Mostra esta mensagem`;
+    msg.reply(help);
+    return;
+  }
+
+  if (body === '!materias') {
+    const events = readICSFile();
+    const subjects = new Set();
+    events.forEach(e => {
+      if (e.categories) {
+        const sub = extractSubjectCode(e.categories);
+        if (sub) subjects.add(sub);
+      }
+    });
+    if (subjects.size === 0) {
+      msg.reply('Nenhuma disciplina encontrada.');
+      return;
+    }
+    const list = Array.from(subjects).map(s => `• ${s}`).join('\n');
+    msg.reply(`📚 *Disciplinas disponíveis:*\n\n${list}\n\nUse !<materia> para ver atividades (ex: !bdi)`);
+    return;
+  }
+
+  if (body === '!atividades_proximas') {
+    const events = readICSFile();
+    const now = new Date();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+    const upcoming = events.filter(e => {
+      const diff = e.startDate - now;
+      return diff > 0 && diff <= sevenDays;
+    }).sort((a, b) => a.startDate - b.startDate);
+
+    if (upcoming.length === 0) {
+      msg.reply('Nenhuma atividade nos próximos 7 dias.');
+      return;
+    }
+
+    let response = `📅 *Atividades próximas (7 dias):*\n\n`;
+    upcoming.forEach(e => {
+      const dateStr = e.startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      const subject = extractSubjectCode(e.categories) || 'Geral';
+      response += `• ${dateStr} - *${subject}* - ${e.summary.substring(0, 60)}\n`;
+    });
+    msg.reply(response);
+    return;
+  }
+
+  // Comando de matéria específica (ex: !banco_dados, !bdi, etc.)
+  if (body.startsWith('!')) {
+    const query = body.substring(1).toLowerCase().replace(/_/g, ' ');
+    const events = readICSFile();
+    const now = new Date();
+    const filtered = events.filter(e => {
+      if (e.startDate < now) return false; // só futuras
+      if (!e.categories) return false;
+      const cat = e.categories.toLowerCase();
+      return cat.includes(query);
+    }).sort((a, b) => a.startDate - b.startDate);
+
+    if (filtered.length === 0) {
+      msg.reply(`Nenhuma atividade encontrada para "${query}". Use !materias para ver disciplinas disponíveis.`);
+      return;
+    }
+
+    let response = `📖 *Atividades de ${query}:*\n\n`;
+    filtered.slice(0, 10).forEach(e => {
+      const dateStr = e.startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      response += `• ${dateStr} - ${e.summary.substring(0, 70)}\n`;
+    });
+    if (filtered.length > 10) response += `\n... e mais ${filtered.length - 10} atividades.`;
+    msg.reply(response);
+    return;
   }
 });
 
