@@ -2,13 +2,15 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 const ICAL = require('ical.js');
+const http = require('http');
 
 // Configurações mínimas
 const CONFIG = {
   groupName: 'Teste_Grupo',
   icsFilePath: './calendario.ics',
   checkInterval: 60 * 60 * 1000, // 1 hora
-  anticipationHours: 720
+  anticipationHours: 720,
+  botApiPort: 3001 // Porta para receber notificações do frontend
 };
 
 // Detectar Chromium do puppeteer
@@ -23,7 +25,7 @@ try {
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: { 
-    headless: true,
+    headless: false, // Modo visível é mais estável no Windows
     executablePath: execPath,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   }
@@ -158,6 +160,19 @@ client.on('message', async msg => {
   }
 
   if (body === '!materias') {
+    try {
+      // Tentar ler subjects.json
+      const subjectsData = JSON.parse(fs.readFileSync('./subjects.json', 'utf-8'));
+      if (subjectsData.subjects && subjectsData.subjects.length > 0) {
+        const list = subjectsData.subjects.map(s => `• ${s.code} - ${s.name}`).join('\n');
+        msg.reply(`📚 *Disciplinas disponíveis:*\n\n${list}\n\nUse !<materia> para ver atividades (ex: !bdi)`);
+        return;
+      }
+    } catch (err) {
+      // Se falhar, usar método antigo (extrair dos eventos)
+    }
+
+    // Fallback: extrair das categorias dos eventos
     const events = readICSFile();
     const subjects = new Set();
     events.forEach(e => {
@@ -226,6 +241,77 @@ client.on('message', async msg => {
     return;
   }
 });
+
+// Servidor HTTP para receber notificações do frontend
+const botServer = http.createServer((req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/notify') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+      try {
+        const data = JSON.parse(body);
+        console.log('📬 Notificação recebida do frontend:', data.summary);
+        
+        // Enviar o lembrete imediatamente para o grupo
+        await sendManualReminderToGroup(data);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true }));
+      } catch (error) {
+        console.error('Erro ao processar notificação:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    });
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+botServer.listen(CONFIG.botApiPort, () => {
+  console.log(`🔌 Bot API rodando na porta ${CONFIG.botApiPort}`);
+});
+
+// Função para enviar lembrete manual imediatamente
+async function sendManualReminderToGroup(eventData) {
+  try {
+    const chats = await client.getChats();
+    const target = CONFIG.groupName.toLowerCase().trim();
+    const group = chats.find(c => c.isGroup && c.name && c.name.toLowerCase().trim() === target);
+    
+    if (!group) {
+      console.error(`Grupo "${CONFIG.groupName}" não encontrado.`);
+      return;
+    }
+
+    const startDate = new Date(eventData.startDate);
+    const dateStr = startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const timeStr = startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    let msg = `🔔 *NOVO LEMBRETE CRIADO* 🔔\n\n`;
+    msg += `*${getActivityType(eventData.summary)}*\n`;
+    msg += `*${eventData.summary}*\n\n`;
+    msg += `📅 ${dateStr} às ${timeStr}\n`;
+    if (eventData.category) msg += `📚 ${eventData.category}\n`;
+    if (eventData.description) msg += `\n💡 ${eventData.description}`;
+
+    await group.sendMessage(msg);
+    console.log('✅ Lembrete manual enviado:', eventData.summary);
+  } catch (err) {
+    console.error('❌ Erro ao enviar lembrete manual:', err.message);
+  }
+}
 
 client.initialize();
 console.log('Iniciando bot...');

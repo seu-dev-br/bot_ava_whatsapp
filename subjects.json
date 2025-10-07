@@ -1,0 +1,36 @@
+{
+  "subjects": [
+    {
+      "code": "ING. INST.",
+      "name": "Inglês Instrumental"
+    },
+    {
+      "code": "L.P.T",
+      "name": "Leitura e Produção de Texto"
+    },
+    {
+      "code": "ES I",
+      "name": "Engenharia de Software"
+    },
+    {
+      "code": "BDI",
+      "name": "Banco de Dados"
+    },
+    {
+      "code": "LDP",
+      "name": "Linguagens de Programação"
+    },
+    {
+      "code": "PBE",
+      "name": "Probabilidade e Estatística"
+    },
+    {
+      "code": "AOC",
+      "name": "Arquitetura e Organização de Computadores"
+    },
+    {
+      "code": "MTC",
+      "name": "Metodologia Científica"
+    }
+  ]
+}

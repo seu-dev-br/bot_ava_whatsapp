@@ -1,0 +1,7 @@
+.wwebjs_auth/
+.wwebjs_chrome/
+node_modules/
+*.log
+.env
+.git/
+whatsapp-web.js

@@ -1,6 +1,16 @@
 node_modules/
 .wwebjs_auth/
 .wwebjs_chrome/
+.wwebjs_cache/
 .env
 .DS_Store
 npm-debug.log
+*.log
+calendario.ics.backupules/
+.wwebjs_auth/
+.wwebjs_chrome/
+.env
+.DS_Store
+npm-debug.log
+*.log
+lendario.icsca.backup

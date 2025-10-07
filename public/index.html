@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot WhatsApp - Gerenciador de Calendário</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 2em; margin-bottom: 10px; }
+    .header p { opacity: 0.9; }
+    .content { padding: 30px; }
+    .section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      border: 2px solid #e9ecef;
+    }
+    .section h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    input[type="file"], input[type="text"], input[type="date"], input[type="time"], textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1em;
+      margin-bottom: 15px;
+      transition: border 0.3s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .event-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .event-item {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      border-left: 4px solid #667eea;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      transition: transform 0.2s;
+    }
+    .event-item:hover { transform: translateX(5px); }
+    .event-info h3 {
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+    }
+    .event-date {
+      color: #667eea;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .event-category {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin-top: 8px;
+    }
+    .btn-delete {
+      background: #f5576c;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      border: 2px solid #e9ecef;
+    }
+    .stat-number {
+      font-size: 2.5em;
+      color: #667eea;
+      font-weight: bold;
+    }
+    .stat-label {
+      color: #6c757d;
+      margin-top: 5px;
+    }
+    .alert {
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .loading { text-align: center; padding: 40px; color: #667eea; }
+    @media (max-width: 768px) {
+      .form-row { grid-template-columns: 1fr; }
+      .header h1 { font-size: 1.5em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🤖 Bot WhatsApp - Gerenciador</h1>
+      <p>Gerencie calendários e lembretes facilmente</p>
+    </div>
+    
+    <div class="content">
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalEvents">0</div>
+          <div class="stat-label">Total de Eventos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="upcomingEvents">0</div>
+          <div class="stat-label">Próximos 7 dias</div>
+        </div>
+      </div>
+
+      <div id="alerts"></div>
+
+      <!-- Upload Section -->
+      <div class="section">
+        <h2>📤 Importar Calendário (.ics)</h2>
+        <input type="file" id="fileInput" accept=".ics">
+        <button class="btn" onclick="uploadCalendar()">Enviar Calendário</button>
+      </div>
+
+      <!-- Manual Reminder -->
+      <div class="section">
+        <h2>➕ Criar Lembrete Manual</h2>
+        <input type="text" id="summary" placeholder="Título do lembrete *" required>
+        <textarea id="description" placeholder="Descrição (opcional)"></textarea>
+        <div class="form-row">
+          <input type="date" id="date" required>
+          <input type="time" id="time" required>
+        </div>
+        <input type="text" id="category" placeholder="Categoria/Disciplina (ex: BDI, ES I)">
+        <button class="btn" onclick="createReminder()">Criar Lembrete</button>
+      </div>
+
+      <!-- Subjects Management -->
+      <div class="section">
+        <h2>📚 Gerenciar Disciplinas</h2>
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="subjectCode" placeholder="Código (ex: BDI)" style="width: 30%; display: inline-block; margin-right: 10px;">
+          <input type="text" id="subjectName" placeholder="Nome completo (ex: Banco de Dados)" style="width: 50%; display: inline-block; margin-right: 10px;">
+          <button class="btn" onclick="addSubject()" style="display: inline-block;">➕ Adicionar</button>
+        </div>
+        <div id="subjectList" style="max-height: 300px; overflow-y: auto;">
+          <div class="loading">Carregando disciplinas...</div>
+        </div>
+      </div>
+
+      <!-- Event List -->
+      <div class="section">
+        <h2>📋 Eventos do Calendário</h2>
+        <button class="btn" onclick="loadEvents()" style="margin-bottom: 20px">🔄 Atualizar Lista</button>
+        <div class="event-list" id="eventList">
+          <div class="loading">Carregando eventos...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+
+    function showAlert(message, type = 'success') {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.textContent = message;
+      document.getElementById('alerts').appendChild(alertDiv);
+      setTimeout(() => alertDiv.remove(), 5000);
+    }
+
+    async function uploadCalendar() {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files[0]) {
+        showAlert('Selecione um arquivo .ics', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('calendar', fileInput.files[0]);
+
+      try {
+        const response = await fetch(`${API_URL}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          showAlert(data.message);
+          fileInput.value = '';
+          loadEvents();
+          loadStats();
+        } else {
+          showAlert(data.error || 'Erro ao enviar calendário', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro de conexão: ' + error.message, 'error');
+      }
+    }
+
+    async function createReminder() {
+      const summary = document.getElementById('summary').value;
+      const description = document.getElementById('description').value;
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const category = document.getElementById('category').value;
+
+      if (!summary || !date || !time) {
+        showAlert('Preencha título, data e hora', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/reminder`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ summary, description, date, time, category })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert(data.message);
+          document.getElementById('summary').value = '';
+          document.getElementById('description').value = '';
+          document.getElementById('date').value = '';
+          document.getElementById('time').value = '';
+          document.getElementById('category').value = '';
+          loadEvents();
+          loadStats();
+        } else {
+          showAlert(data.error || 'Erro ao criar lembrete', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro de conexão: ' + error.message, 'error');
+      }
+    }
+
+    async function deleteEvent(uid) {
+      if (!confirm('Deseja realmente deletar este evento?')) return;
+
+      try {
+        const response = await fetch(`${API_URL}/event/${encodeURIComponent(uid)}`, {
+          method: 'DELETE'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert('Evento deletado com sucesso');
+          loadEvents();
+          loadStats();
+        } else {
+          showAlert(data.error || 'Erro ao deletar evento', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro de conexão: ' + error.message, 'error');
+      }
+    }
+
+    async function loadEvents() {
+      const listDiv = document.getElementById('eventList');
+      listDiv.innerHTML = '<div class="loading">Carregando eventos...</div>';
+
+      try {
+        const response = await fetch(`${API_URL}/events`);
+        const data = await response.json();
+
+        if (data.events.length === 0) {
+          listDiv.innerHTML = '<p style="text-align:center;color:#6c757d;">Nenhum evento encontrado</p>';
+          return;
+        }
+
+        listDiv.innerHTML = data.events.map(event => {
+          const date = new Date(event.startDate);
+          const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const timeStr = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          
+          return `
+            <div class="event-item">
+              <div class="event-info">
+                <div class="event-date">${dateStr} às ${timeStr}</div>
+                <h3>${event.summary}</h3>
+                ${event.description ? `<p style="color:#6c757d;margin-top:5px">${event.description.substring(0, 100)}...</p>` : ''}
+                ${event.categories ? `<span class="event-category">${event.categories}</span>` : ''}
+              </div>
+              <button class="btn-delete" onclick="deleteEvent('${event.uid}')">🗑️ Deletar</button>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        listDiv.innerHTML = `<p style="color:#f5576c;text-align:center">Erro: ${error.message}</p>`;
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const response = await fetch(`${API_URL}/events`);
+        const data = await response.json();
+        
+        document.getElementById('totalEvents').textContent = data.events.length;
+        
+        const now = new Date();
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        const upcoming = data.events.filter(e => {
+          const diff = new Date(e.startDate) - now;
+          return diff > 0 && diff <= sevenDays;
+        });
+        document.getElementById('upcomingEvents').textContent = upcoming.length;
+      } catch (error) {
+        console.error('Erro ao carregar stats:', error);
+      }
+    }
+
+    async function loadSubjects() {
+      const listDiv = document.getElementById('subjectList');
+      listDiv.innerHTML = '<div class="loading">Carregando disciplinas...</div>';
+
+      try {
+        const response = await fetch(`${API_URL}/subjects`);
+        const data = await response.json();
+
+        if (data.subjects.length === 0) {
+          listDiv.innerHTML = '<p style="text-align:center;color:#6c757d;">Nenhuma disciplina cadastrada</p>';
+          return;
+        }
+
+        listDiv.innerHTML = data.subjects.map(subject => `
+          <div class="event-item" style="border-left-color: #764ba2;">
+            <div class="event-info">
+              <h3>${subject.code}</h3>
+              <p style="color:#6c757d;margin-top:5px">${subject.name}</p>
+            </div>
+            <div>
+              <button class="btn-delete" onclick="editSubject('${subject.code}', '${subject.name}')" style="background: #667eea; margin-right: 5px;">✏️</button>
+              <button class="btn-delete" onclick="deleteSubject('${subject.code}')">🗑️</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        listDiv.innerHTML = `<p style="color:#f5576c;text-align:center">Erro: ${error.message}</p>`;
+      }
+    }
+
+    async function addSubject() {
+      const code = document.getElementById('subjectCode').value.trim();
+      const name = document.getElementById('subjectName').value.trim();
+
+      if (!code || !name) {
+        showAlert('Preencha código e nome da disciplina', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/subject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, name })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert(data.message);
+          document.getElementById('subjectCode').value = '';
+          document.getElementById('subjectName').value = '';
+          loadSubjects();
+        } else {
+          showAlert(data.error || 'Erro ao adicionar disciplina', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro de conexão: ' + error.message, 'error');
+      }
+    }
+
+    async function editSubject(code, currentName) {
+      const newName = prompt(`Editar nome da disciplina ${code}:`, currentName);
+      if (!newName || newName === currentName) return;
+
+      try {
+        const response = await fetch(`${API_URL}/subject/${encodeURIComponent(code)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert(data.message);
+          loadSubjects();
+        } else {
+          showAlert(data.error || 'Erro ao editar disciplina', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro de conexão: ' + error.message, 'error');
+      }
+    }
+
+    async function deleteSubject(code) {
+      if (!confirm(`Deseja realmente deletar a disciplina ${code}?`)) return;
+
+      try {
+        const response = await fetch(`${API_URL}/subject/${encodeURIComponent(code)}`, {
+          method: 'DELETE'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          showAlert('Disciplina deletada com sucesso');
+          loadSubjects();
+        } else {
+          showAlert(data.error || 'Erro ao deletar disciplina', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro de conexão: ' + error.message, 'error');
+      }
+    }
+
+    // Carregar eventos e disciplinas ao abrir a página
+    loadEvents();
+    loadStats();
+    loadSubjects();
+  </script>
+</body>
+</html>

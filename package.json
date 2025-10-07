@@ -5,7 +5,9 @@
   "main": "whatsapp-web.js",
   "scripts": {
     "start": "node whatsapp-web.js",
-    "dev": "node whatsapp-web.js"
+    "dev": "node whatsapp-web.js",
+    "web": "node server.js",
+    "all": "node server.js & node whatsapp-web.js"
   },
   "keywords": [
     "whatsapp",
@@ -16,12 +18,19 @@
   ],
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/seu-dev-br/bot_ava_whatsapp.git"
   },
   "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "ical.js": "^1.5.0",
+    "multer": "^2.0.2",
     "puppeteer": "^24.23.0",
     "qrcode-terminal": "^0.12.0",
     "whatsapp-web.js": "^1.23.0"
