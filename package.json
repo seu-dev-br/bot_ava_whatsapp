@@ -1,0 +1,29 @@
+{
+  "name": "whatsapp-ics-reminder-bot",
+  "version": "1.0.0",
+  "description": "Bot para enviar lembretes de eventos .ics no WhatsApp",
+  "main": "whatsapp-web.js",
+  "scripts": {
+    "start": "node whatsapp-web.js",
+    "dev": "node whatsapp-web.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "calendar",
+    "ics",
+    "reminders"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seu-dev-br/bot_ava_whatsapp.git"
+  },
+  "dependencies": {
+    "ical.js": "^1.5.0",
+    "puppeteer": "^24.23.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.23.0"
+  }
+}

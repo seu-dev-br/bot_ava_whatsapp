@@ -1,0 +1,163 @@
+BEGIN:VCALENDAR
+METHOD:PUBLISH
+PRODID:-//Moodle Pty Ltd//NONSGML Moodle Version 2024100701.06//EN
+VERSION:2.0
+BEGIN:VEVENT
+UID:8075@ava.iftm.edu.br
+SUMMARY:Atividades 3 e 4 - interpretação e gramática está marcado(a) para e
+	sta data
+	
+DESCRIPTION:Referentes ao Módulo II\n
+CLASS:PUBLIC
+LAST-MODIFIED:20250930T095253Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251003T025900Z
+DTEND:20251003T025900Z
+CATEGORIES: ING. INST.-2-2025-92635-1
+END:VEVENT
+BEGIN:VEVENT
+UID:8239@ava.iftm.edu.br
+SUMMARY:Atividades práticas está marcado(a) para esta data
+DESCRIPTION:Referentes ao Módulo II\n\n
+CLASS:PUBLIC
+LAST-MODIFIED:20250930T095201Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251003T025900Z
+DTEND:20251003T025900Z
+CATEGORIES:L.P.T-2-2025-91972-1
+END:VEVENT
+BEGIN:VEVENT
+UID:8803@ava.iftm.edu.br
+SUMMARY:Mudança na Maturidade no Desenvolvimento de Software está marcado(a
+	) para esta data
+	
+DESCRIPTION:Reflexão crítica sobre "Mudança na Maturidade no Desenvolviment
+	o de Software [1]"\n\nOBJETIVO: Analisar criticamente situações comuns em p
+	rojetos de desenvolvimento de software\, identificando boas práticas da Eng
+	enharia de Software.\n\nINSTRUÇÕES:\n\n	*\nAssista atentamente ao vídeo "Mu
+	dança na Maturidade no Deenvolvimento de Software"\, disponível no seguinte
+	 link: PiQh_bzoJoc [2]\n\n	*\nApós assistir ao vídeo\, elabore um texto ref
+	lexivo\, comparando-o com o vídeo da aula anterior (entre 20 e 30 linhas) s
+	eguindo os critérios abaixo:\n\n	*\nCompare a situação problemática apresen
+	tada no vídeo da aula anterior\, e descreva o que mudou e quais foram os ac
+	ertos elencados\, segundo a Engenharia de Software.\n\nCRITÉRIOS DE AVALIAÇ
+	ÃO:\n\n	*\nClareza e coerência na argumentação\;\n\n	*\nCapacidade de ident
+	ificar e relacionar questões específicas às práticas de Engenharia de Softw
+	are\;\n\n	*\nProposição pertinentes e fundamentadas teoricamente\;\n\n	*\nE
+	strutura textual organizada (introdução\, desenvolvimento e conclusão).\n\n
+	FORMATO DE ENTREGA: Texto dissertativo (formato PDF) OU podcast (formato Mp
+	3) OU vídeo (formato Mp4).\n\nPRAZO PARA ENTREGA: A atividade deverá ser po
+	stada no AVA até as 23h59min do dia posterior ao sábado letivo.\n\nOBSERVAÇ
+	ÕES:\n\n	*\nEsta atividade é obrigatória e será utilizada para fins de vali
+	dação de frequência\;\n\n	*\nNão haverá atribuição de nota\;\n\n	*\nA ativi
+	dade promove a reflexão crítica sobre a importância das boas práticas em En
+	genharia de Software.\n\nBom trabalho!\n\n\nLinks:\n------\n[1] https://ava
+	.iftm.edu.br/mod/assign/view.php?id=86477\n[2] https://youtu.be/PiQh_bzoJoc
+	?si=YUKAalSvCarHbKcj\n
+	
+CLASS:PUBLIC
+LAST-MODIFIED:20250826T232603Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251006T005900Z
+DTEND:20251006T005900Z
+CATEGORIES:ES I-2-2025-92634-1
+END:VEVENT
+BEGIN:VEVENT
+UID:10267@ava.iftm.edu.br
+SUMMARY:Avaliação 1 está marcado(a) para esta data
+DESCRIPTION:
+CLASS:PUBLIC
+LAST-MODIFIED:20250925T142730Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251011T025900Z
+DTEND:20251011T025900Z
+CATEGORIES:L.P.T-2-2025-91972-1
+END:VEVENT
+BEGIN:VEVENT
+UID:10270@ava.iftm.edu.br
+SUMMARY:Avaliação 1 está marcado(a) para esta data
+DESCRIPTION:
+CLASS:PUBLIC
+LAST-MODIFIED:20250925T145423Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251011T025900Z
+DTEND:20251011T025900Z
+CATEGORIES: ING. INST.-2-2025-92635-1
+END:VEVENT
+BEGIN:VEVENT
+UID:7431@ava.iftm.edu.br
+SUMMARY:Atividade para validar frequência está marcado(a) para esta data
+DESCRIPTION:Exercícios Propostos\n
+CLASS:PUBLIC
+LAST-MODIFIED:20251001T172046Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251013T025900Z
+DTEND:20251013T025900Z
+CATEGORIES:ES I-2-2025-92634-1
+END:VEVENT
+BEGIN:VEVENT
+UID:10716@ava.iftm.edu.br
+SUMMARY:Atividade para Registro de Frequência – Sábado Letivo (04/10/2025) 
+	está marcado(a) para esta data
+	
+DESCRIPTION:EXERCÍCIOS PROPOSTOS\n_\n_\n\n
+CLASS:PUBLIC
+LAST-MODIFIED:20251001T173139Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251013T025900Z
+DTEND:20251013T025900Z
+CATEGORIES:BDI-2-2025-92633-1
+END:VEVENT
+BEGIN:VEVENT
+UID:7426@ava.iftm.edu.br
+SUMMARY:Avaliação Qualitativa II: Seminário de Manutenção e Teste de Softwa
+	re está marcado(a) para esta data
+	
+DESCRIPTION:
+CLASS:PUBLIC
+LAST-MODIFIED:20251006T221144Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251023T025900Z
+DTEND:20251023T025900Z
+CATEGORIES:ES I-2-2025-92634-1
+END:VEVENT
+BEGIN:VEVENT
+UID:7437@ava.iftm.edu.br
+SUMMARY:Entrega da Avaliação Qualitativa II: Modelagem do BD - Modelo Lógic
+	o está marcado(a) para esta data
+	
+DESCRIPTION:
+CLASS:PUBLIC
+LAST-MODIFIED:20251001T172602Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251107T005900Z
+DTEND:20251107T005900Z
+CATEGORIES:BDI-2-2025-92633-1
+END:VEVENT
+BEGIN:VEVENT
+UID:7438@ava.iftm.edu.br
+SUMMARY:Entrega da Avaliação Qualitativa III: Especificação (dicionário) de
+	 BD está marcado(a) para esta data
+	
+DESCRIPTION:
+CLASS:PUBLIC
+LAST-MODIFIED:20251001T172603Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251121T005900Z
+DTEND:20251121T005900Z
+CATEGORIES:BDI-2-2025-92633-1
+END:VEVENT
+BEGIN:VEVENT
+UID:7427@ava.iftm.edu.br
+SUMMARY:Avaliação Qualitativa III: Documento de Requisitos de Software está
+	 marcado(a) para esta data
+	
+DESCRIPTION:
+CLASS:PUBLIC
+LAST-MODIFIED:20251006T221122Z
+DTSTAMP:20251007T104648Z
+DTSTART:20251121T025900Z
+DTEND:20251121T025900Z
+CATEGORIES:ES I-2-2025-92634-1
+END:VEVENT
+END:VCALENDAR
